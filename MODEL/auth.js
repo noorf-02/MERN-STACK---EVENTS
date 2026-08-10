@@ -10,7 +10,7 @@ const authSchema = new Schema({
   lastName: {
     type: String,
     required: true,
-    maxlenght: [15, "Name shouldn't exceed 20 characters"],
+    maxlength: [15, "Name shouldn't exceed 20 characters"],
   },
   username:{
     type: String,
