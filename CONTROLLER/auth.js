@@ -1,9 +1,9 @@
+const { json } = require("express");
 const Auth = require("../MODEL/auth");
 const bcrypt = require("bcryptjs");
 
 const signUp = async (req, res) => {
-
-    const {firstName,lastName,username,email,password} = req.body;
+  const { firstName, lastName, username, email, password } = req.body;
 
   const exists = await Auth.findOne({
     $or: [{ username }, { email }],
@@ -15,25 +15,43 @@ const signUp = async (req, res) => {
     });
   }
 
-  const hashedPassword = await bcrypt.hash(password,10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await Auth.create({
-    firstName:firstName,
-    lastName:lastName,
-    username:username,
-    email:email,
-    password:hashedPassword
+    firstName: firstName,
+    lastName: lastName,
+    username: username,
+    email: email,
+    password: hashedPassword,
   });
 
   res.status(200).json({
-    message:"User has been registered successfully",
-    user
-  })
-
+    message: "User has been registered successfully",
+    user,
+  });
 };
 
 const logIn = async (req, res) => {
-  res.send("LogIn");
+  const { username, password } = req.body;
+  const exists = await Auth.findOne({ username });
+  if (!exists) {
+    return res.status(400).json({
+      message: "User does not exist. Please Register",
+    });
+}
+
+    const comparePass = await bcrypt.compare(password, exists.password);
+    if (!comparePass) {
+      return res.status(400).json({
+        message: "Username or password invalid",
+      });
+    }
+  
+
+    res.status(200).json({
+        message:"User logged in successfully!",
+        exists
+    })
 };
 
 module.exports = { signUp, logIn };
