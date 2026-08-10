@@ -8,11 +8,13 @@ const port = process.env.PORT;
 const connectDB = require('./DB_CONNECTION/DBconnection');
 connectDB();
 const Router = require('./VIEW/auth');
+const EventRouter = require('./VIEW/event');
 
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(Router);
+app.use(EventRouter);
 
 app.get('/',(req,res)=>{
     res.send('App is running. No worries');

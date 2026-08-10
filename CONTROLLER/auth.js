@@ -1,4 +1,4 @@
-const { json } = require("express");
+const express = require("express");
 const Auth = require("../MODEL/auth");
 const bcrypt = require("bcryptjs");
 
