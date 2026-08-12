@@ -12,6 +12,7 @@ const postEvent = async (req, res) => {
     endAt,
     capacity,
     contact,
+    organizer,
   } = req.body;
 
   if(!title || !description || !category || !venue || !city || !date || !startAt || !endAt || !capacity || !contact){
@@ -31,6 +32,7 @@ const event = await Event.create({
   endAt: endAt,
   capacity: capacity,
   contact: contact,
+  organizer: req.user.id
 });
 
 
@@ -41,10 +43,21 @@ res.status(200).json({
 
 };
 
-const getEvents = async (req, res) => {
-    const allEvents = await Event.find({});
-    res.send(allEvents);
+
+const getEvents = async (req,res)=>{
+  const allEvents = await Event.find({});
+  res.send(allEvents);
+}
+
+const userEvents = async (req, res) => {
+    const userEvents = await Event.find({
+      organizer: req.user.id
+    });
+    
+    res.status(200).json({
+      userEvents
+    })
 
 };
 
-module.exports = { postEvent, getEvents };
+module.exports = { postEvent, getEvents, userEvents };

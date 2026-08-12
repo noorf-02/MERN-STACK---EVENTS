@@ -53,7 +53,7 @@
     organizerName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Auth",
-        required:false
+        required:true
     },
     });
 
