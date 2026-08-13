@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const JWT_CONFIG = process.env.JWT_CONFIG;
 
 const signUp = async (req, res) => {
-  const { firstName, lastName, username, email, password } = req.body;
+  const { firstName, lastName, username, email, password, role} = req.body;
 
   const exists = await Auth.findOne({
     $or: [{ username }, { email }],
@@ -16,6 +16,19 @@ const signUp = async (req, res) => {
       message: "User already exists",
     });
   }
+  
+  if(!firstName || !lastName || !email || !username|| !password){
+    return res.status(401).json({
+      message:'Please fill all fields'
+    })
+  }
+
+   if(password.length<8){
+    return res.status(401).json({
+      message:"Password must be at least 8 characters long"
+    })
+  }
+
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,12 +38,14 @@ const signUp = async (req, res) => {
     username: username,
     email: email,
     password: hashedPassword,
+    role:role
   });
 
   res.status(200).json({
     message: "User has been registered successfully",
     user,
   });
+
 };
 
 const logIn = async (req, res) => {
@@ -61,7 +76,7 @@ const logIn = async (req, res) => {
 
   res.status(200).json({
     message:"User logged in successfully",
-    token
+    token, role: exists.role
   })
 };
 

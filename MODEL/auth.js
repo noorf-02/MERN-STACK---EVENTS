@@ -5,7 +5,7 @@ const authSchema = new Schema({
   firstName: {
     type: String,
     required: true,
-    maxlenght: [20, "Name shouldn't exceed 20 characters"],
+    maxlength: [20, "Name shouldn't exceed 20 characters"],
   },
   lastName: {
     type: String,
@@ -26,6 +26,12 @@ const authSchema = new Schema({
     required: true,
     minlength:[8, 'Password should be at least 8 characters']
   },
+  role:{
+    type:String,
+    enum:['attendee', 'organizer', 'admin'],
+    default:'attendee',
+    required:true
+  }
 });
 
 const Auth = mongoose.model('Auth', authSchema);
