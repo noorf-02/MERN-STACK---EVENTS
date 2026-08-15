@@ -48,7 +48,7 @@
     contact: {
         type: String,
         required: true,
-        maxLength: 12,
+        maxLength: 15,
     },
     organizerName: {
         type: String,
