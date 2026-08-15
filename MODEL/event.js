@@ -51,10 +51,14 @@
         maxLength: 12,
     },
     organizerName: {
+        type: String,
+        required:true
+    },
+    organizer:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Auth",
         required:true
-    },
+    }
     });
 
     const Event = mongoose.model("Event", eventSchema);

@@ -12,20 +12,21 @@ const postEvent = async (req, res) => {
     endAt,
     capacity,
     contact,
-    organizer,
+    organizerName,
+    organizer
   } = req.body;
 
-  if(description.length>500){
-    return res.status(401).json({
-      message:'Description limit exceeded'
-    })
-  }
-
-  if(!title || !description || !category || !venue || !city || !date || !startAt || !endAt || !capacity || !contact){
+  if(!title || !description || !category || !venue || !city || !date || !startAt || !endAt || !capacity || !contact || !organizerName){
     return res.status(400).json({
         message:"Please fill all fields first"
     })
 }
+
+if(description.length>500){
+    return res.status(400).json({
+      message:'Description limit exceeded'
+    })
+  }
 
 const event = await Event.create({
   title: title,
@@ -38,6 +39,7 @@ const event = await Event.create({
   endAt: endAt,
   capacity: capacity,
   contact: contact,
+  organizerName: organizerName,
   organizer: req.user.id
 });
 
