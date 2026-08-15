@@ -13,7 +13,6 @@ const postEvent = async (req, res) => {
     capacity,
     contact,
     organizerName,
-    organizer
   } = req.body;
 
   if(!title || !description || !category || !venue || !city || !date || !startAt || !endAt || !capacity || !contact || !organizerName){
@@ -50,12 +49,15 @@ res.status(200).json({
 });
 
 };
-
+ 
+// GET ALL EVENTS 
 
 const getEvents = async (req,res)=>{
   const allEvents = await Event.find({});
   res.send(allEvents);
 }
+
+// GET EVENTS CREATED BY A SPECIFIC USER 
 
 const userEvents = async (req, res) => {
     const userEvents = await Event.find({
@@ -68,4 +70,31 @@ const userEvents = async (req, res) => {
 
 };
 
-module.exports = { postEvent, getEvents, userEvents };
+// DELETE EVENTS 
+
+const deleteEvent = async (req,res)=>{
+  try{
+    const event = await Event.findById(req.params.id);
+    
+    if(event.organizer.toString!==req.user.id){
+      return res.status(401).json({
+        message:'You are not authorized to delete this event!'
+      })
+    }
+
+    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message:'Event Deleted successfully!'
+    })
+  } catch(error){
+    res.status(500).json({
+      message:'Something went wrong!',
+      error: error.message
+    })
+  }
+}
+
+
+
+module.exports = { postEvent, getEvents, userEvents, deleteEvent };
