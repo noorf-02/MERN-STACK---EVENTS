@@ -15,6 +15,12 @@ const postEvent = async (req, res) => {
     organizer,
   } = req.body;
 
+  if(description.length>500){
+    return res.status(401).json({
+      message:'Description limit exceeded'
+    })
+  }
+
   if(!title || !description || !category || !venue || !city || !date || !startAt || !endAt || !capacity || !contact){
     return res.status(400).json({
         message:"Please fill all fields first"
