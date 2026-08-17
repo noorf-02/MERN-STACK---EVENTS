@@ -72,28 +72,40 @@ const userEvents = async (req, res) => {
 
 // DELETE EVENTS 
 
-const deleteEvent = async (req,res)=>{
-  try{
+const deleteEvent = async (req, res) => {
+  try {
     const event = await Event.findById(req.params.id);
-    
-    if(event.organizer.toString!==req.user.id){
-      return res.status(401).json({
-        message:'You are not authorized to delete this event!'
-      })
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
     }
 
-    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+    console.log("Event organizer:", event.organizer.toString());
+    console.log("Logged in user:", req.user.id.toString());
+
+    if (event.organizer.toString() !== req.user.id.toString()) {
+      return res.status(401).json({
+        message: "You are not authorized to delete this event!",
+      });
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
-      message:'Event Deleted successfully!'
-    })
-  } catch(error){
+      message: "Event Deleted successfully!",
+    });
+
+  } catch (error) {
+    console.log(error);
+
     res.status(500).json({
-      message:'Something went wrong!',
-      error: error.message
-    })
+      message: "Something went wrong!",
+      error: error.message,
+    });
   }
-}
+};
 
 
 
