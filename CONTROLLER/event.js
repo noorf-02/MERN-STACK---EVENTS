@@ -116,57 +116,86 @@ const deleteEvent = async (req, res) => {
 };
 
 const editEvent = async (req, res) => {
-  const event = await Event.findById(req.params.id);
-
   try {
+    const event = await Event.findById(req.params.id);
     if (!event) {
-      return res.status(401).json({
+      return res.status(404).json({
         message: "Event does not exist",
       });
     }
 
     if (event.organizer.toString() !== req.user.id.toString()) {
-      return res.status(401).json({
+      return res.status(403).json({
         message: "You are not authorized to delete this event!",
       });
     }
 
-    if(req.body.title && req.body.title.length > 50){
+    if (req.body.title && req.body.title.length > 50) {
       return res.status(401).json({
-        message:'Title limit exceeded'
-      })
+        message: "Title limit exceeded",
+      });
     }
 
-    if(req.body.description && req.body.description.length > 500 ){
+    if (req.body.description && req.body.description.length > 500) {
       return res.status(401).json({
-        message:'Description limit exceeded'
-      });
+        message: "Description limit exceeded",
+      }); 
+    }
 
-      const updatedEvent = await Event.findByIdAndUpdate(req.params.id,{
-        title:req.body.title,
-        description:req.body.description,
-        category:req.body.category,
-        venue:req.body.venue,
-        city:req.body.city,
-        date:req.body.date,
-        startAt:req.body.startAt,
-        endAt:req.body.endAt,
-        capacity:req.body.capacity,
-        contact:req.body.contact,
-        organizerName:req.body.organizerName
-      },{
-        new:true
-      });
+      const updatedEvent = await Event.findByIdAndUpdate(
+        req.params.id,
+        {
+          title: req.body.title,
+          description: req.body.description,
+          category: req.body.category,
+          venue: req.body.venue,
+          city: req.body.city,
+          date: req.body.date,
+          startAt: req.body.startAt,
+          endAt: req.body.endAt,
+          capacity: req.body.capacity,
+          contact: req.body.contact,
+          organizerName: req.body.organizerName,
+        },
+        {
+          new: true,
+        },
+      );
 
       res.status(200).json({
-        message:'Event updated successfully'
-      })
-    }
-  } catch (error) {
+        message: "Event updated successfully",
+      });
+    } catch (error) {
     res.status(401).json({
-      message: "Error occured. Cannot update Event.",
+      message: "Error occured. Cannot update Event."
     });
   }
 };
 
-module.exports = { postEvent, getEvents, userEvents, deleteEvent,editEvent };
+const getSingleEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event does not exist",
+      });
+    }
+
+    if (event.organizer.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        message: "You are not authorized to view this event",
+      });
+    }
+
+    res.status(200).json(event);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { postEvent, getEvents, userEvents, deleteEvent, editEvent, getSingleEvent };
