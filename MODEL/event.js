@@ -58,6 +58,11 @@
         type: mongoose.Schema.Types.ObjectId,
         ref: "Auth",
         required:true
+    },
+    status:{
+        type: String,
+        enum:['pending', 'approved', 'rejected'],
+        default:['pending']
     }
     });
 

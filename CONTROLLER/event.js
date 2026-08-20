@@ -13,6 +13,7 @@ const postEvent = async (req, res) => {
     capacity,
     contact,
     organizerName,
+    status,
   } = req.body;
 
   if (
@@ -52,6 +53,7 @@ const postEvent = async (req, res) => {
     contact: contact,
     organizerName: organizerName,
     organizer: req.user.id,
+    status: "pending",
   });
 
   res.status(200).json({
@@ -139,35 +141,35 @@ const editEvent = async (req, res) => {
     if (req.body.description && req.body.description.length > 500) {
       return res.status(401).json({
         message: "Description limit exceeded",
-      }); 
+      });
     }
 
-      const updatedEvent = await Event.findByIdAndUpdate(
-        req.params.id,
-        {
-          title: req.body.title,
-          description: req.body.description,
-          category: req.body.category,
-          venue: req.body.venue,
-          city: req.body.city,
-          date: req.body.date,
-          startAt: req.body.startAt,
-          endAt: req.body.endAt,
-          capacity: req.body.capacity,
-          contact: req.body.contact,
-          organizerName: req.body.organizerName,
-        },
-        {
-          new: true,
-        },
-      );
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title,
+        description: req.body.description,
+        category: req.body.category,
+        venue: req.body.venue,
+        city: req.body.city,
+        date: req.body.date,
+        startAt: req.body.startAt,
+        endAt: req.body.endAt,
+        capacity: req.body.capacity,
+        contact: req.body.contact,
+        organizerName: req.body.organizerName,
+      },
+      {
+        new: true,
+      },
+    );
 
-      res.status(200).json({
-        message: "Event updated successfully",
-      });
-    } catch (error) {
+    res.status(200).json({
+      message: "Event updated successfully",
+    });
+  } catch (error) {
     res.status(401).json({
-      message: "Error occured. Cannot update Event."
+      message: "Error occured. Cannot update Event.",
     });
   }
 };
@@ -189,7 +191,6 @@ const getSingleEvent = async (req, res) => {
     }
 
     res.status(200).json(event);
-
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",
@@ -198,4 +199,32 @@ const getSingleEvent = async (req, res) => {
   }
 };
 
-module.exports = { postEvent, getEvents, userEvents, deleteEvent, editEvent, getSingleEvent };
+const pendingEvents = async (req, res) => {
+  try {
+    const pending = await Events.find({
+      status: "pending",
+    });
+
+    res.status(200).json({
+      pending,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not fetch pending events!",
+    });
+  }
+};
+
+const approvedEvents = async(req,res)=>{
+  
+}
+
+module.exports = {
+  postEvent,
+  getEvents,
+  userEvents,
+  deleteEvent,
+  editEvent,
+  getSingleEvent,
+  pendingEvents
+};
