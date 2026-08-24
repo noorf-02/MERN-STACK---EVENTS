@@ -8,8 +8,9 @@ const {
   editEvent,
   getSingleEvent,
   pendingEvents,
+  approvedEvents
 } = require("../CONTROLLER/event");
-const protect = require("../MIDDLEWARE/auth");
+const {protect,admin} = require("../MIDDLEWARE/auth");
 
 Router.post("/post-event", protect, postEvent);
 
@@ -21,5 +22,5 @@ Router.delete("/delete-event/:id", protect, deleteEvent);
 Router.patch("/edit-event/:id", protect, editEvent);
 
 Router.get("/admin/pending-events", protect, admin, pendingEvents);
-
+Router.patch("/admin/approve-event/:id", protect, admin, approvedEvents);
 module.exports = Router;

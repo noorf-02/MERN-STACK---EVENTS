@@ -65,7 +65,9 @@ const postEvent = async (req, res) => {
 // GET ALL EVENTS
 
 const getEvents = async (req, res) => {
-  const allEvents = await Event.find({});
+  const allEvents = await Event.find({
+    status:'approved'
+  });
   res.send(allEvents);
 };
 
@@ -201,7 +203,7 @@ const getSingleEvent = async (req, res) => {
 
 const pendingEvents = async (req, res) => {
   try {
-    const pending = await Events.find({
+    const pending = await Event.find({
       status: "pending",
     });
 
@@ -216,7 +218,25 @@ const pendingEvents = async (req, res) => {
 };
 
 const approvedEvents = async(req,res)=>{
-  
+  try{
+    const event = await Event.findById(req.params.id);
+    if(!event){
+      return res.status(401).json({
+        message:'Event not found'
+      })
+    }
+
+    event.status = 'approved';
+    await event.save();
+
+    res.status(200).json({
+      message:'Event approved successfully'
+    })
+  } catch(error){
+    res.status(500).json({
+      message:'Could not approve Event'
+    })
+  }
 }
 
 module.exports = {
@@ -226,5 +246,5 @@ module.exports = {
   deleteEvent,
   editEvent,
   getSingleEvent,
-  pendingEvents
+  pendingEvents, approvedEvents
 };

@@ -35,7 +35,7 @@ const protect = (req,res,next)=>{
     }
 }
 
-const admin = async (req,res)=>{
+const admin = async (req,res,next)=>{
     if(req.user.role !== 'admin'){
         return res.status(403).json({
             message:'Admin access required!'
@@ -45,4 +45,4 @@ const admin = async (req,res)=>{
     next();
 }
 
-module.exports = protect
+module.exports = {protect, admin}
