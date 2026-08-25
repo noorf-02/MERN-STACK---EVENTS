@@ -211,6 +211,8 @@ const pendingEvents = async (req, res) => {
       pending,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: "Could not fetch pending events!",
     });
@@ -237,7 +239,30 @@ const approvedEvents = async(req,res)=>{
       message:'Could not approve Event'
     })
   }
-}
+};
+
+const rejectEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Event rejected and deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not reject event",
+    });
+  }
+};
 
 module.exports = {
   postEvent,
@@ -246,5 +271,5 @@ module.exports = {
   deleteEvent,
   editEvent,
   getSingleEvent,
-  pendingEvents, approvedEvents
+  pendingEvents, approvedEvents, rejectEvent
 };
