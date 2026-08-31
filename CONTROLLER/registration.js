@@ -67,7 +67,28 @@ const registeredEvents = async (req, res) => {
   }
 };
 
+const getEventRegistrations = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+
+    const registrations = await Registration.find({
+      event: eventId,
+    }).populate("attendee", "firstName lastName email username");
+
+    res.status(200).json({
+      registrations,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Could not fetch registered users",
+    });
+  }
+};
+
 module.exports = {
   registerEvent,
   registeredEvents,
+   getEventRegistrations,
 };
